@@ -54,42 +54,53 @@ from .anatomy.centerline import ManifoldPathfinder
 __version__ = "0.1.0"
 
 
+# Plugin kwarg names accepted by SynthEndoEnv
+_PLUGIN_KEYS = {
+    "terminal", "truncation", "start", "interimtarget",
+    "pathfinder", "reward", "info_builder", "renderer", "devices",
+}
+
+
 def make(name: str, **overrides) -> SynthEndoEnv:
     """
     Create environment from a registered preset name.
 
-    Extra kwargs are merged as anatomy overrides:
-        anatomy_mesh  : str   — override mesh path at runtime
-        seed          : int   — convenience alias (pass to env.reset instead)
+    Anatomy overrides:
+        anatomy_mesh  : str  — override mesh path
+
+    Plugin overrides (injected directly into SynthEndoEnv):
+        terminal, truncation, start, interimtarget,
+        pathfinder, reward, info_builder, renderer
 
     Example:
         env = ses.make("SynthEndoSim-AorticArch-CAS-v1",
-                       anatomy_mesh="data/KiTS_K1.obj")
+                       anatomy_mesh="data/KiTS_K1.obj",
+                       terminal=TargetReachedTerminal(threshold_mm=5.0))
     """
     cfg = get_config(name)
+    plugins = {k: overrides.pop(k) for k in list(overrides) if k in _PLUGIN_KEYS}
     if "anatomy_mesh" in overrides:
         cfg.anatomy.mesh_path = overrides.pop("anatomy_mesh")
-    return SynthEndoEnv(cfg)
+    return SynthEndoEnv(cfg, **plugins)
 
 
 def make_env(
     config_path: Optional[str] = None,
     config_dict: Optional[Dict[str, Any]] = None,
+    **plugins,
 ) -> SynthEndoEnv:
     """
     Create environment from a YAML file or a plain dict.
 
     Merges with base.yaml defaults, so you only need to specify overrides.
+    Plugin objects can be injected as kwargs.
 
-    Example (dict):
-        env = ses.make_env(config_dict={
-            "anatomy": {
-                "mesh_path": "data/aorta.obj",
-                "insertion_point": [-23, -180, -15],
-                "target_point":    [-31.7, 70.3, 11.6],
-            },
-            "physics": {"backend": "mock"},
-        })
+    Example:
+        env = ses.make_env(
+            config_dict={"physics": {"backend": "mock"}, ...},
+            terminal=TargetReachedTerminal(threshold_mm=5.0),
+            interimtarget=CenterlineWaypointTarget(n_waypoints=5),
+        )
     """
     if config_path is not None:
         cfg = load_config(config_path)
@@ -97,7 +108,8 @@ def make_env(
         cfg = config_from_dict(config_dict)
     else:
         cfg = EnvConfig()
-    return SynthEndoEnv(cfg)
+    valid = {k: v for k, v in plugins.items() if k in _PLUGIN_KEYS}
+    return SynthEndoEnv(cfg, **valid)
 
 
 def from_mesh(
