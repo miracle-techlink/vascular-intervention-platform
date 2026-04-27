@@ -1,4 +1,5 @@
 from .base import InterimTarget, NoInterimTarget
+from .branching import BranchingPointTarget
 from .waypoints import (
     FixedWaypointTarget,
     CenterlineWaypointTarget,
@@ -7,7 +8,8 @@ from .waypoints import (
 )
 
 _REGISTRY = {
-    "none":             NoInterimTarget,
+    "none":              NoInterimTarget,
+    "branching_points":  BranchingPointTarget,
     "fixed":            FixedWaypointTarget,
     "centerline":       CenterlineWaypointTarget,
     "proximity_window": ProximityWindowTarget,
