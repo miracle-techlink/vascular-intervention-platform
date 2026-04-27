@@ -28,3 +28,14 @@ data/*/synth_dsa*.json
 
 # OS
 .DS_Store
+
+# 仿真模型权重（体积过大，通过 Release 下载）
+simulation/models*/
+simulation/**/*.zip
+simulation/tb_logs/
+
+# 仿真运行输出
+simulation/demo_output*/
+simulation/viz_3d/
+simulation/viz_3d_mesh/
+simulation/logs/
