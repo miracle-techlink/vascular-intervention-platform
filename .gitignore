@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+
+# Frontend build artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Case data (large medical images & meshes — regenerable / machine-local symlinks)
+data/*/*.nrrd
+data/*/*.nii.gz
+data/*/segmented/
+data/*/meshes/*.obj
+data/*/synth_dsa*.mp4
+data/*/synth_dsa*.json
+
+# Keep small metadata files
+!data/*/meshes/nav_points.json
+!data/*/meshes/planned_path.json
+
+# Logs / LaTeX
+*.log
+*.aux
+*.out
+
+# OS
+.DS_Store
