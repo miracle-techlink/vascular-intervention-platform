@@ -1,0 +1,58 @@
+name: SynthEndoSim-v1
+
+physics:
+  backend: sofa
+  dt_simulation: 0.006
+  friction: 0.1
+
+device:
+  kind: j_guidewire
+  total_length: 450.0
+  tip_length: 40.0
+  tip_angle: 0.21
+  diameter: 0.89
+  stiffness: 1.71e4
+  young_modulus: 1.7e5
+  poisson_ratio: 0.49
+
+anatomy:
+  mesh_path: ""
+  insertion_point: [0.0, 0.0, 0.0]
+  insertion_direction: [0.0, 1.0, 0.0]
+  target_point: [0.0, 100.0, 0.0]
+  centerline_path: null
+  scale: [1.0, 1.0, 1.0]
+  rotation_yzx_deg: [0.0, 0.0, 0.0]
+  visu_mesh_path: null
+  name: custom
+
+imaging:
+  kind: biplane_dsa
+  image_size: [128, 128]
+  lao_deg: 30.0
+  lat_deg: 120.0
+  n0_photons: 15000
+  mu_blood: 0.048
+  mu_tissue: 0.020
+
+reward:
+  manifold_distance_weight: 1.0
+  target_reached_bonus: 10.0
+  step_penalty: -0.01
+  wall_collision_penalty: -1.0
+  target_threshold_mm: 10.0
+  use_manifold: true
+
+obs:
+  use_tip_3d: true
+  use_wire_mask: false
+  use_path_remaining: true
+  use_insertion_length: true
+  use_rotation: true
+  normalise: true
+
+episode:
+  max_steps: 300
+  seed_train: null
+  seed_eval: null
+  held_out_seeds: []
